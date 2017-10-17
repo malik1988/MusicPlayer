@@ -414,7 +414,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="slider">
+         <widget class="QSlider" name="timeSlider">
           <property name="minimumSize">
            <size>
             <width>440</width>
@@ -554,11 +554,45 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>playButton</sender>
+   <signal>clicked()</signal>
+   <receiver>mainWindow</receiver>
+   <slot>slot_play_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>75</x>
+     <y>635</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>76</x>
+     <y>678</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pauseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>mainWindow</receiver>
+   <slot>slot_pause_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>120</x>
+     <y>637</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>139</x>
+     <y>699</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>slot_prev_page_clicked()</slot>
   <slot>slot_next_page_clicked()</slot>
   <slot>slot_prev_song_clicked()</slot>
   <slot>slot_next_song_clicked()</slot>
+  <slot>slot_play_clicked()</slot>
+  <slot>slot_pause_clicked()</slot>
  </slots>
 </ui>

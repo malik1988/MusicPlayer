@@ -1,7 +1,7 @@
 # coding: utf-8
 '''歌单列表控件
 '''
-import api
+from apis.netEaseApi import netease
 from songsgroupbox import SongsGroupBox
 from uiloader import loadUi
 
@@ -20,7 +20,7 @@ class SongsFrame(uiBaseClass, qtBaseclass):
         qtBaseclass.__init__(self)
         self.parent = parent
         self.setupUi(self)
-        self.func = api.WebApi()
+        self.func = netease
         self.load()
 
     def load(self, offset=0):

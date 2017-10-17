@@ -9,6 +9,21 @@ from songsframe import SongsFrame
 from albumdetailview import AlbumDetailView
 
 
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5 import QtCore
+
+
+class Mp3Player(QWidget):
+    def __init__(self):
+        # super(Mp3Player, self).__init__(self)
+        QWidget.__init__(self)
+        self.player = QMediaPlayer(self)
+        mp3 = QtCore.QUrl.fromLocalFile(
+            '/tmp/2b5c07d6d9d32958d77f76546c36f5a8.mp3')
+        self.player.setMedia(QMediaContent(mp3))
+        self.player.play()
+
+
 class Window(QWidget):
     def __init__(self):
         QWidget.__init__(self)
@@ -31,8 +46,9 @@ class Window(QWidget):
         # w = SongsFrame(self)
         # w.load()
 
-        w = AlbumDetailView(self)
-        w.setAlbum(id=916906701)
+        # w = AlbumDetailView(self)
+        # w.setAlbum(id=916906701)
+        w = Mp3Player()
         return w
 
 

@@ -2,19 +2,34 @@
 
 from PyQt5 import QtCore
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QListWidgetItem
+from PyQt5.QtWidgets import QListWidgetItem, QMessageBox
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from uiloader import loadUi
 from songsframe import SongsFrame
 from albumdetailview import AlbumDetailView
+from songItem import SongItem
+# import api
+from apis.netEaseApi import netease
 
 ui_mainwindow, qtbaseclass = loadUi(name='mainwindow.ui')
 
 
 class MainWindow(ui_mainwindow, qtbaseclass):
-    # 当前播放列表
-    playList = []
+
     # 详情页面
     detail = None
+    # 当前播放列表
+    playList = []
+    # 当前播放的歌曲在列表中的索引号
+    songIndex = 0
+    # 当前播放的歌曲
+    song = None
+    # 播放器
+    player = None
+    # api
+    func = netease
+    # 是否循环播放
+    loop = True
 
     def __init__(self, parent=None):
         if parent == None:
@@ -55,7 +70,12 @@ class MainWindow(ui_mainwindow, qtbaseclass):
         # 未实现（动态添加）
 
     def initPlayWidgets(self):
-        # 初始化播放控件状态
+        ''' 初始化播放控件状态'''
+        self.player = QMediaPlayer(self)
+        self.player.setVolume(100)
+        self.player.stateChanged.connect(self.slot_player_stateChanged)
+        self.player.positionChanged.connect(self.slot_player_positionChanged)
+        self.player.durationChanged.connect(self.slot_player_durationChanged)
 
         # 隐藏暂停按键
         self.pauseButton.hide()
@@ -106,6 +126,22 @@ class MainWindow(ui_mainwindow, qtbaseclass):
         '''下一首歌'''
         pass
 
+    def slot_play_clicked(self):
+        '''播放 点击事件'''
+        if self.player.mediaStatus() > 1 and self.player.mediaStatus() < 7:
+            self.player.play()
+            self.playButton.hide()
+            self.pauseButton.show()
+        else:
+            # 未添加 音乐
+            pass
+
+    def slot_pause_clicked(self):
+        '''暂停 点击事件'''
+        self.player.pause()
+        self.playButton.show()
+        self.pauseButton.hide()
+
     def slot_addSongs(self, songsList):
         '''添加歌曲'''
         # 去重合并列表
@@ -113,4 +149,58 @@ class MainWindow(ui_mainwindow, qtbaseclass):
         for song in songsList:
             if song.id not in ids:
                 self.playList.append(song)
-        pass
+        if self.song == None:
+            self.song = self.playList[self.songIndex]
+            try:
+                mp3 = self.func.singsUrl([self.song.id])
+                if mp3:
+                    mp3 = mp3[0]['url']
+                self.player.setMedia(QMediaContent(QtCore.QUrl(mp3)))
+            except:
+                # 网络异常
+                pass
+
+    def slot_player_stateChanged(self):
+        '''播放器状态变化'''
+        if not self.playList:
+            return
+
+        if self.player.state() == QMediaPlayer.StoppedState:
+            if self.loop:
+                self.songIndex = (self.songIndex + 1) % len(self.playList)
+                self.song = self.playList[self.songIndex]
+                try:
+                    mp3 = self.func.singsUrl([self.song.id])
+                    if mp3:
+                        mp3 = mp3[0]['url']
+                    self.player.setMedia(QMediaContent(QtCore.QUrl(mp3)))
+                except:
+                    # 网络异常
+                    QMessageBox.warning(self, '获取音乐地址失败！请检查网络后重试！', '警告')
+                self.player.play()
+            else:
+                self.playButton.show()
+                self.pauseButton.hide()
+        elif self.player.state() == QMediaPlayer.PausedState:
+            self.playButton.show()
+            self.pauseButton.hide()
+        elif self.player.state() == QMediaPlayer.PlayingState:
+            self.playButton.hide()
+            self.pauseButton.show()
+
+        self.countTime.setText(self.song.time)
+
+    def slot_player_positionChanged(self, pos):
+        '''播放时间改变控件位置'''
+        t = self.player.position() / 1000
+        mins = t // 60
+        secs = t % 60
+        curTime = QtCore.QTime(0, mins, secs).toString('mm:ss')
+        self.currentTime.setText(curTime)
+        # if self.song and float(self.song.time.replace(':', '.')) > 0:
+        #     curSlider = float(curTime.replace(':', '.')
+        #                       ) // float(self.song.time.replace(':', '.'))
+        self.timeSlider.setValue(pos)
+
+    def slot_player_durationChanged(self, duration):
+        self.timeSlider.setRange(0, duration)

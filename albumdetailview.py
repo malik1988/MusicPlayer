@@ -1,12 +1,13 @@
 # coding: utf-8
 '''歌单详情'''
 
-import api
+# import api
 from PyQt5.QtWidgets import QTableWidgetItem, QAbstractItemView
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QTime, pyqtSignal
 from uiloader import loadUi, setLogo
 from songItem import SongItem
+from apis.netEaseApi import netease
 
 uiBaseClass, qtBaseclass = loadUi(name='albumdetailview.ui')
 
@@ -24,7 +25,7 @@ class AlbumDetailView(uiBaseClass, qtBaseclass):
         qtBaseclass.__init__(self)
         self.parent = parent
         self.setupUi(self)
-        self.func = api.WebApi()
+        self.func = netease
         self.initTableWidget()
 
     def initTableWidget(self):
