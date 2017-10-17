@@ -3,9 +3,6 @@
 '''
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
-from navigation import Navigation
-from maincontent import MainContent
-from neteasesingsframes import NetEaseSearchResultFrame
 from mainwindow import MainWindow
 from songsgroupbox import SongsGroupBox
 from songsframe import SongsFrame

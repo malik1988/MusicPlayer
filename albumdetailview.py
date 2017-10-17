@@ -4,13 +4,20 @@
 import api
 from PyQt5.QtWidgets import QTableWidgetItem, QAbstractItemView
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QTime
+from PyQt5.QtCore import QTime, pyqtSignal
 from uiloader import loadUi, setLogo
+from songItem import SongItem
 
 uiBaseClass, qtBaseclass = loadUi(name='albumdetailview.ui')
 
 
 class AlbumDetailView(uiBaseClass, qtBaseclass):
+    # 当前歌单中所有歌曲列表，只记录ID号
+    trackList = []
+    # 需要播放的歌曲列表
+    # playList = []
+
+    addSongs = pyqtSignal(list)
 
     def __init__(self, parent=None):
         uiBaseClass.__init__(self)
@@ -55,13 +62,16 @@ class AlbumDetailView(uiBaseClass, qtBaseclass):
             self.notes.setText('简介：〖' + details['description'][:30] + '〗')
             self.notes.setToolTip('简介：〖' + details['description'] + '〗')
             self.notes.setWordWrap(True)
-        except TypeError:
+        except:
             self.notes.setText('简介：〖〗')
             self.notes.setToolTip('简介：〖〗')
         # 设置歌单列表
         self.tableWidget.setRowCount(details['trackCount'])
-
+        # 清空之前的列表信息
+        self.trackList.clear()
         for i, track in enumerate(details['tracks']):
+            # 歌曲ID号
+            id = track['id']
             # 第一列为序号 0,1,2,3...
             self.tableWidget.setItem(i, 0, QTableWidgetItem(str(i + 1)))
             self.tableWidget.setItem(i, 1, QTableWidgetItem(
@@ -82,6 +92,27 @@ class AlbumDetailView(uiBaseClass, qtBaseclass):
 
             minuties = track['bMusic']['playTime'] // 60000
             seconds = track['bMusic']['playTime'] // 1000 % 60
-            time = QTime(0, minuties, seconds)
+            time = QTime(0, minuties, seconds).toString('mm:ss')
             self.tableWidget.setItem(
-                i, 5, QTableWidgetItem(time.toString('mm:ss')))
+                i, 5, QTableWidgetItem(time))
+            song = SongItem(name=name, id=id, artist=artist, time=time)
+
+            self.trackList.append(song)
+
+    def slot_playAll_clicked(self):
+        '''播放全部 点击事件'''
+        self.addSongs.emit(self.trackList)
+        pass
+
+    def slot_downloadAll_clicked(self):
+        '''下载全部 点击事件'''
+        pass
+
+    def slot_tableCell_doubleClicked(self, row, column):
+        '''歌曲列表 双击事件
+        row - 表格中对应的行号，
+        column - 表格中对应的列号
+        '''
+        songId = self.trackList[row]
+        # self.playList.append(songId)
+        self.addSongs.emit([songId])

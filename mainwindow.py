@@ -11,6 +11,9 @@ ui_mainwindow, qtbaseclass = loadUi(name='mainwindow.ui')
 
 
 class MainWindow(ui_mainwindow, qtbaseclass):
+    # 当前播放列表
+    playList = []
+    # 详情页面
     detail = None
 
     def __init__(self, parent=None):
@@ -69,6 +72,7 @@ class MainWindow(ui_mainwindow, qtbaseclass):
         # 初始化详情页
         self.detail = AlbumDetailView(self)
         self.detailView.setWidget(self.detail)
+        self.detail.addSongs.connect(self.slot_addSongs)
 
     def mouseMoveEvent(self, event):
         if event.buttons() == QtCore.Qt.MiddleButton:
@@ -100,4 +104,13 @@ class MainWindow(ui_mainwindow, qtbaseclass):
 
     def slot_next_song_clicked(self):
         '''下一首歌'''
+        pass
+
+    def slot_addSongs(self, songsList):
+        '''添加歌曲'''
+        # 去重合并列表
+        ids = [x.id for x in self.playList]
+        for song in songsList:
+            if song.id not in ids:
+                self.playList.append(song)
         pass

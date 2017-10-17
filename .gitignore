@@ -1,2 +1,5 @@
 .vscode
 __pycahe__
+*.pyc
+build
+dist

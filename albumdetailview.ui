@@ -112,5 +112,59 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>playAll</sender>
+   <signal>clicked()</signal>
+   <receiver>ScrollArea</receiver>
+   <slot>slot_playAll_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>-17</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>downloadAll</sender>
+   <signal>clicked()</signal>
+   <receiver>ScrollArea</receiver>
+   <slot>slot_downloadAll_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellDoubleClicked(int,int)</signal>
+   <receiver>ScrollArea</receiver>
+   <slot>slot_tableCell_doubleClicked(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>211</x>
+     <y>231</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>131</x>
+     <y>473</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>slot_playAll_clicked()</slot>
+  <slot>slot_downloadAll_clicked()</slot>
+  <slot>slot_tableCell_doubleClicked(int,int)</slot>
+ </slots>
 </ui>
