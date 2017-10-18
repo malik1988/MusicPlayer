@@ -8,6 +8,7 @@ from PyQt5.QtCore import QTime, pyqtSignal
 from uiloader import loadUi, setLogo
 from songItem import SongItem
 from apis.netEaseApi import netease
+from downloader import DownloaderManager, Downloader
 
 uiBaseClass, qtBaseclass = loadUi(name='albumdetailview.ui')
 
@@ -17,6 +18,8 @@ class AlbumDetailView(uiBaseClass, qtBaseclass):
     trackList = []
     # 需要播放的歌曲列表
     # playList = []
+
+    downloader = None
 
     addSongs = pyqtSignal(list)
 
@@ -107,7 +110,17 @@ class AlbumDetailView(uiBaseClass, qtBaseclass):
 
     def slot_downloadAll_clicked(self):
         '''下载全部 点击事件'''
-        pass
+        # downList = []
+        for song in self.trackList:
+            url = self.func.singsUrl([song.id])
+            if url:
+                url = url[0]['url']
+            path = '/tmp/netEase/mp3/%s.mp3' % song.name
+            down = Downloader(url, parent=self, savePath=path)
+            down.start()
+            # downList.append(down)
+        # self.downloader = DownloaderManager(self, downList)
+        # self.downloader.start()
 
     def slot_tableCell_doubleClicked(self, row, column):
         '''歌曲列表 双击事件

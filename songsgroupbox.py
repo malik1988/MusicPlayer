@@ -1,9 +1,9 @@
 # coding: utf-8
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
-from PyQt5.QtCore import QUrl, QThread, Qt, pyqtSignal, QFile, QIODevice
 from uiloader import loadUi, buildCacheDir, setLogo
 import os
+from downloader import Downloader
+from PyQt5.QtCore import pyqtSignal, Qt
 
 uiBaseClass, qtBaseclass = loadUi(name='songsgroupbox.ui')
 
@@ -16,7 +16,7 @@ cacheDir = buildCacheDir()
 class SongsGroupBox(uiBaseClass, qtBaseclass):
     __slots__ = ('author', 'logo', 'name')
     clicked = pyqtSignal(int, str)
-    thread = None
+    downloader = None
     # 记录LOGO文件存储路径
     logoPath = None
 
@@ -51,8 +51,9 @@ class SongsGroupBox(uiBaseClass, qtBaseclass):
         if os.path.exists(path):
             setLogo(self.logo, path, (120, 120))
         else:
-            self.thread = Download(logoUrl, self.logo, path)
-            self.thread.start()
+            self.downloader = Downloader(logoUrl, self.logo, path)
+            self.downloader.downloaded.connect(self.slot_pic_downloaded)
+            self.downloader.start()
 
     def mousePressEvent(self, event):
         '''重写鼠标点击事件'''
@@ -62,29 +63,6 @@ class SongsGroupBox(uiBaseClass, qtBaseclass):
         else:
             event.ignore()
 
-
-class Download(QThread):
-    """用于主页歌单等的图片加载。"""
-
-    def __init__(self, url, parent=None, savePath=0):
-        super(Download, self).__init__(parent)
-        self.main = parent
-        self.url = QUrl(url)
-        self.manager = QNetworkAccessManager()
-        self.savePath = savePath
-
-    def run(self):
-        data = self.manager.get(QNetworkRequest(self.url))
-        self.manager.finished.connect(lambda: self.save_pic(data))
-        self.exec_()
-
-    def save_pic(self, data):
-        f = QFile(self.savePath)
-        f.open(QIODevice.WriteOnly)
-        data = data.readAll()
-        f.write(data)
-        f.flush()
-        f.close()
-        pic = QPixmap()
-        pic.loadFromData(data)
-        self.main.setPixmap(pic.scaled(120, 120))
+    def slot_pic_downloaded(self, savePath):
+        '''图片下载完成'''
+        setLogo(self.logo, savePath, (120, 120))
