@@ -2,11 +2,12 @@
 '''测试入口
 '''
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMainWindow
 from mainwindow import MainWindow
 from songsgroupbox import SongsGroupBox
 from songsframe import SongsFrame
 from albumdetailview import AlbumDetailView
+from playlistdockwidget import PlayListDockWidget
 
 
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
@@ -32,6 +33,8 @@ class Window(QWidget):
         self.setLayout(bl)
         bl.setSpacing(0)
         bl.setContentsMargins(0, 0, 0, 0)
+        w = AlbumDetailView(self)
+        bl.addWidget(w)
         bl.addWidget(widget)
 
     def testWidget(self):
@@ -48,8 +51,16 @@ class Window(QWidget):
 
         # w = AlbumDetailView(self)
         # w.setAlbum(id=916906701)
-        w = Mp3Player()
+        # w = Mp3Player()
+        w = PlayListDockWidget(self)
         return w
+
+
+class DockMainWindow(QMainWindow):
+    def __init__(self):
+        QMainWindow.__init__(self)
+        w = PlayListDockWidget(self)
+        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, w)
 
 
 if __name__ == '__main__':
@@ -57,5 +68,6 @@ if __name__ == '__main__':
     # app.setStyleSheet(QSS)
     # l = Window()
     l = MainWindow()
+    # l = DockMainWindow()
     l.show()
     sys.exit(app.exec_())

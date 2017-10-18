@@ -153,13 +153,13 @@ QPushButton#volume:hover {
     border-image: url('resource/volume_hover.png');
 }
 
-QPushButton#no_volume {
+QPushButton#noVolume {
     width: 20px;
     height: 20px;
     border-image: url('resource/no_volume.png');
 }
 
-QPushButton#no_volume:hover {
+QPushButton#noVolume:hover {
     border-image: url('resource/no_volume_hover.png');
 }
 

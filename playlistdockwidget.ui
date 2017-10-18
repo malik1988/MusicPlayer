@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DockWidget</class>
  <widget class="QDockWidget" name="DockWidget">
@@ -6,13 +6,71 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>586</width>
+    <height>338</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>DockWidget</string>
+  <property name="minimumSize">
+   <size>
+    <width>120</width>
+    <height>92</height>
+   </size>
   </property>
-  <widget class="QWidget" name="dockWidgetContents"/>
+  <property name="floating">
+   <bool>true</bool>
+  </property>
+  <property name="features">
+   <set>QDockWidget::AllDockWidgetFeatures</set>
+  </property>
+  <property name="windowTitle">
+   <string>播放列表</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <property name="toolTip">
+    <string>播放列表</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QTableWidget" name="tableWidget"/>
+    </item>
+   </layout>
+  </widget>
  </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellDoubleClicked(int,int)</signal>
+   <receiver>DockWidget</receiver>
+   <slot>slot_tableCell_doubleClicked(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>159</x>
+     <y>208</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>slot_tableCell_doubleClicked(int,int)</slot>
+ </slots>
 </ui>
