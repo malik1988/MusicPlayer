@@ -1,5 +1,5 @@
 .vscode
-__pycahe__
+__pycache__
 *.pyc
 build
 dist
